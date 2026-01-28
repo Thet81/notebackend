@@ -1,7 +1,7 @@
 
 const express = require('express')
 const app = express()
-
+const cors = require('cors')
 let notes = [
   {
     id: "1",
@@ -20,37 +20,17 @@ let notes = [
   }
 ]
 
-const persons = [
-    { 
-      "id": "1",
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": "2",
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": "3",
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": "4",
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
 
+app.use(cors())
 app.use(express.json())
+app.use(express.static('dist'))
 
 app.get('/', (request, response)=> {
     response.send('<h1>Hello</h1>')
 })
 
-app.get('/api/notes', (request, respone)=> {
-    respone.json(persons) 
+app.get('/api/notes', (request, response)=> {
+    response.json(notes) 
 })
 
 app.get('/api/notes/:id',(request,response)=> {
@@ -96,6 +76,8 @@ function generateID () {
         : 0
     return String(maxID + 1)
 }
-app.listen(3000, ()=> {
-    console.log('Server is running on port 3000')
+
+const PORT = process.env.PORT || 3001
+app.listen(3001, ()=> {
+    console.log('Server is running on port 3001')
 })

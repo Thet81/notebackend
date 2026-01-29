@@ -8,7 +8,7 @@ GET http://localhost:3000/api/notes/100
 
 ### 
 
-GET http://localhost:3000/api/notes/2
+GET http://localhost:3001/api/notes
 
 
 ### 

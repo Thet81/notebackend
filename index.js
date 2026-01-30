@@ -1,25 +1,8 @@
-
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
-let notes = [
-  {
-    id: "1",
-    content: "HTML is easy",
-    important: true
-  },
-  {
-    id: "2",
-    content: "Browser can execute only JavaScript",
-    important: false
-  },
-  {
-    id: "3",
-    content: "GET and POST are the most important methods of HTTP protocol",
-    important: true
-  }
-]
-
+const Note = require('./model/note')
 
 app.use(cors())
 app.use(express.json())
@@ -30,8 +13,27 @@ app.get('/', (request, response)=> {
 })
 
 app.get('/api/notes', (request, response)=> {
-    response.json(notes) 
+     Note.find({}).then((note)=> {
+        response.json(note)
+     })
+    
 })
+app.post('/api/notes',(request, response)=> {
+    const body = request.body
+    console.log(body)
+    if(!body.content) {
+        return response.status(400).json({error : 'Content missing'})
+    }
+    const note = new Note({
+        content : body.content,
+        important : body.important || false
+    })
+
+    note.save().then((savedNote)=> {
+        response.json(savedNote)
+    })
+})
+
 
 app.get('/api/notes/:id',(request,response)=> {
     const id = request.params.id
@@ -50,34 +52,8 @@ app.delete('/api/notes/:id',(request,response)=> {
     response.status(204).end()
 })
 
-app.post('/api/notes',(request, response)=> {
-    const body = request.body
-    const maxID = notes.length > 0 
-        ? Math.max(...notes.map(n=> n.id))
-        : 0
 
-    if (!body) {
-        return response.status(204).end()
-    }
-
-    const note = {
-        content : body.content,
-        important : body.important || false,
-        id : generateID()
-    }
-
-    notes = notes.concat(note)
-    response.json(note)
-})
-
-function generateID () {
-    const maxID = notes.length > 0 
-        ? Math.max(...notes.map(n=> n.id))
-        : 0
-    return String(maxID + 1)
-}
-
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT || 3000
 app.listen(3000, ()=> {
-    console.log('Server is running on port 3001')
+    console.log('Server is running on port 3000')
 })
